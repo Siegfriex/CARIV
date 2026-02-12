@@ -1,6 +1,6 @@
 # CarivDealer VID (Verification & Integration Document)
 
-**목적**: IA·FSD·코드베이스 간 추적성 및 통합 규약을 정의하는 개발자 참조 문서. 에이전트가 참조할 '법전'.
+**목적**: IA·FSD·코드베이스 간 추적성 및 통합 규약을 정의하는 내부이해관계자용문서
 
 ---
 
@@ -74,25 +74,6 @@ Phase 1 완료(2026-02-12). 아래는 이력 기록용.
 - `@/pages/admin/GeneralSaleOffersPage` → `@/pages/admin/sale/GeneralSaleOffersPage`
 - `@/pages/admin/SalesHistoryPage` → `@/pages/admin/sale/SalesHistoryPage`
 
-### 1.5 문서 동기화 대상 (Phase 4에서 일괄 업데이트)
-
-§0.2a grep 검증으로 확정된 문서 목록. Phase 4에서 경로 참조를 Phase 1 최종 경로로 수정.
-
-| 문서 | 실제 경로 참조 유형 |
-|------|---------------------|
-| docs/figma/FSD_IA_NODEID_SSOT.md | §2.2, §3, §4 코드 참조 열 |
-| docs/figma/FSD_IA_NODEID_SSOT_VERIFICATION_REPORT.md | @/pages/admin/logistics/LogisticsSchedulePage 등 (Phase 4 반영) |
-| docs/FSD_ENFORCEMENT_RULES.md | src/pages/admin/settlement/SettlementListPage.tsx 등 (Phase 4 반영) |
-| docs/figmaMCP/FIGMA_ASSET_TRACEABILITY.md | pages/admin/logistics/LogisticsSchedulePage.tsx (Phase 4 반영) |
-| docs/figmaMCP/impl_plans/1714-22332_구현계획.md | src/pages/admin/trade/TradeListPage.tsx (Phase 4 반영) |
-| docs/figmaMCP/impl_plans/794-4708_*.md | src/pages/admin/trade/TradeDetailPage.tsx (Phase 4 반영) |
-| docs/HANDOFF_NEXT_AGENT.md | LogisticsSchedulePage.tsx, TradeDetailPage.tsx |
-| **FRONTEND_ARCHITECTURE_REVIEW.md** | **프로젝트 루트** (docs/ 하위 아님). pages/admin/sale/GeneralSaleOffersPage.tsx 등 (Phase 4 반영) |
-| figma-design-audit/src/figma_audit/scope.py | pages/admin/logistics/LogisticsSchedulePage.tsx (Phase 4 반영) |
-| docs/README.md, docs/CHANGELOG_2026-02-11.md, docs/SITEMAP_IMPLEMENTATION_STATUS.md | 경로·페이지명 참조 |
-| docs/GNB_MINIMAL_SIDEBAR_VERIFICATION.md, docs/FRONTEND_CODE_EVALUATION.md | 페이지 경로 참조 |
-| docs/figma/FSD_SPEC_BLUEPRINT.md, docs/figma/IA_SITEMAP_SPEC_IPOE.md | 슬라이스·경로 참조 |
-| docs/figma/NODEID_ROUTE_PAGE_FIGMASCR_VERIFICATION.md | 경로 참조 |
 
 ---
 
@@ -112,7 +93,7 @@ Phase 1 완료(2026-02-12). 아래는 이력 기록용.
 
 ---
 
-## §3 VID Protocol — 5대 절대 규약
+## §3 VID 규칙
 
 | Protocol | 제목 | 핵심 규칙 |
 |----------|------|-----------|
@@ -176,7 +157,7 @@ router.tsx 기준. FSD_IA_NODEID_SSOT와 경로 일치. `@/pages/admin/{domain}/
 
 ---
 
-## §5 routeManager (Phase 2 결과)
+## §5 routeManager
 
 - **위치**: `src/shared/utils/navigation/routeManager.ts`
 - **역할**: mockNavigationMap 대체. 상태 기반 차량 상세 라우트 생성.
@@ -210,17 +191,17 @@ router.tsx 기준. FSD_IA_NODEID_SSOT와 경로 일치. `@/pages/admin/{domain}/
 **결정**: **No Barrel로 통일**. logistics, settlement, trade도 `@/pages/admin/logistics/LogisticsSchedulePage` 형태로 직접 import.
 
 - logistics·settlement·trade에만 Barrel을 도입하면 같은 admin 구조 안에서 import 방식이 섞여 코드베이스 일관성이 해짐.
-- Barrel을 적용하려면 inspection, auction, sale 등 모든 admin 도메인에 Barrel을 도입해야 함. (Phase 1 범위 외)
+- Barrel을 적용하려면 inspection, auction, sale 등 모든 admin 도메인에 Barrel을 도입해야 함.
 
 ---
 
-## §8 CarivDealer Code Manifesto
+## §8 CarivDealer Code
 
 ### 정조 (Core Principles)
 
 1. **단일 진실 공급원**: URL·SSOT·코드 경로 일치. 문서와 코드 동기화 필수.
 2. **FSD 계층 준수**: app→pages→widgets→features→entities→shared. 역참조 금지.
-3. **가독성 우선**: 성급한 최적화 금지. Early Return, 명확한 네이밍.
+3. **가독성 우선**: Early Return, 명확한 네이밍.
 4. **방어적 프로그래밍**: 로딩·빈 데이터·에러·404 모든 상태 처리.
 
 ### 3-Tier Commenting Strategy
@@ -233,30 +214,16 @@ router.tsx 기준. FSD_IA_NODEID_SSOT와 경로 일치. `@/pages/admin/{domain}/
 
 ### Readability vs Optimization
 
-- **대원칙**: "성급한 최적화(Premature Optimization)는 만악의 근원이다."
 - **가독성 우선**: 변수명(데이터 내용), 함수명(동사+목적어), Early Return, Magic Number 금지.
 - **최적화**: Profiling 후 병목 확인 시에만. useMemo/useCallback은 무거운 계산·자식 리렌더 방지 필요 시만.
-
-### Standard Work Flow (The Ritual)
-
-1. **Make it Work**: 비즈니스 로직 구현, 기능 동작.
-2. **Make it Right**: 변수명 교체, 함수 분리, 중복 제거. L1/L2 주석 작성.
-3. **Make it Fast**: 성능 이슈 부분만 선별 최적화.
-4. **Review**: 로직 결함, 엣지 케이스 처리 여부 검증.
-
 ---
 
-## §7 Phase 3 검토 항목 (실행 완료)
+## §7 기능 세부 분리
 
-**Phase 3 실행 완료** (2026-02-12). 아래는 Task A·B·C 결과 반영.
-
-**실행 방법론**: [PHASE3_METHODOLOGY.md](PHASE3_METHODOLOGY.md) — 완수 기준, 달성 요구사항, 개발 전략, 검사·인테그레이션 상세.
 
 ### 7.1 Feature 분리 (De-coupling) — 완료
 
-| Task | 결과 |
-|------|------|
-| **Task A** | `ocrRegistration`을 `features/vehicle-registration`으로 분리 완료. `VehicleRegisterStep1Page`만 `@/features/vehicle-registration`에서 import. `register-form`의 `useVehicle`, `useVehicles`, `getVehicleStatistics`는 유지. |
+`ocrRegistration`을 `features/vehicle-registration`으로 분리 완료. `VehicleRegisterStep1Page`만 `@/features/vehicle-registration`에서 import. `register-form`의 `useVehicle`, `useVehicles`, `getVehicleStatistics`는 유지. 
 
 **register-form 의존성 범위**: useVehicle, useVehicles — VehicleListPage, TradeListPage, DashboardPage, VehicleDetailPage, TradeDetailPage, AuctionDetailPage, GeneralSalePricePage, AuctionStartPricePage. ocrRegistration은 vehicle-registration으로 분리됨.
 
@@ -279,3 +246,4 @@ router.tsx 기준. FSD_IA_NODEID_SSOT와 경로 일치. `@/pages/admin/{domain}/
 | 1.2 | 2026-02-12 | §0.2a grep 명령 명시, §1.1 이력 표 전환, §4 사이트맵·라우트 추가, §5 routeManager 스펙 추가, §8 정조 4줄 추가. |
 | 1.3 | 2026-02-12 | routeManager JSDoc §2.5→§5, README mockNavigationMap→routeManager, §4 /mypage 행·라우트 수치·FALLBACK_ROUTE 동기화 명시. |
 | 1.4 | 2026-02-12 | Phase 3 실행 완료. §7 검토→실행 완료. Task A·B·C 결과 반영. |
+| 1.5 | 2026-02-13 | 배포용 정리 완료. |

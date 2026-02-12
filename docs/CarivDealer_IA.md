@@ -1,6 +1,6 @@
 # CarivDealer Information Architecture (IA)
 
-**목적**: CarivDealer 서비스의 정보구조·사이트맵·라우팅·메뉴 구조를 정의하는 IA 문서. SSOT 기반, 실제 코드베이스 검증 완료.
+**목적**: CarivDealer 서비스의 정보구조·사이트맵·라우팅·메뉴 구조를 정의하는 IA 문서. SSOT 기반, 실제 코드베이스 반영
 
 ---
 
