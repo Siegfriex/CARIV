@@ -9,11 +9,16 @@
 ## 0. 화면테스트방법
 -해당 도메인 접속시, 다음 화면은 미인증 상태임. <img width="2558" height="1296" alt="image" src="https://github.com/user-attachments/assets/c4b986f7-3d2a-4148-8303-58db3e793443" />
 -> 따라서-> 플로우 테스트 목적, **인증상태전환**은 다음과 같음.
+
 1. GNB 우상단 로그인 / 회원가입 버튼 클릭
-2. 다음 모달 팝업에서 **회원가입** 버튼 클릭.  <img width="2559" height="1295" alt="image" src="https://github.com/user-attachments/assets/764f6799-ec23-482c-8b6e-733037e17ba4" />
-3. 회원가입탭 - /signup 탭에서, 하단 **로그인**탭 클릭   <img width="2554" height="1301" alt="image" src="https://github.com/user-attachments/assets/68d6862f-08a3-4379-b188-0524d642ba59" />
-4. 다시, 로그인탭 - /login 탭에서 **로그인**탭 클릭 <img width="2559" height="1288" alt="image" src="https://github.com/user-attachments/assets/1489ffb5-7edb-47aa-978e-8db71fd60554" />
-5. 다음 화면 쇼잉시 성공 <img width="1537" height="1266" alt="image" src="https://github.com/user-attachments/assets/4f992aa2-de81-4096-bf58-dc820a1c6b07" />
+   
+3. 다음 모달 팝업에서 **회원가입** 버튼 클릭.  <img width="2559" height="1295" alt="image" src="https://github.com/user-attachments/assets/764f6799-ec23-482c-8b6e-733037e17ba4" />
+
+4. 회원가입탭 - /signup 탭에서, 하단 **로그인**버튼 클릭   <img width="2554" height="1301" alt="image" src="https://github.com/user-attachments/assets/68d6862f-08a3-4379-b188-0524d642ba59" />
+
+5. 다시, 로그인탭 - /login 탭에서 **로그인**버튼 클릭 <img width="2559" height="1288" alt="image" src="https://github.com/user-attachments/assets/1489ffb5-7edb-47aa-978e-8db71fd60554" />
+
+6. 다음 화면 쇼잉시 성공 <img width="1537" height="1266" alt="image" src="https://github.com/user-attachments/assets/4f992aa2-de81-4096-bf58-dc820a1c6b07" />
 또는 <img width="1651" height="1279" alt="image" src="https://github.com/user-attachments/assets/e0c3f019-5f80-47f8-97f9-6e1df95589b1" />
 
 
