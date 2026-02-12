@@ -1,6 +1,6 @@
 # CarivDealer VID (Verification & Integration Document)
 
-**목적**: IA·FSD·코드베이스 간 추적성 및 통합 규약을 정의하는 개발자 참조 문서. 에이전트가 참조할 '법전'.
+**목적**: IA·FSD·코드베이스 간 추적성 및 통합 규약을 정의하는 내부이해관계자용문서
 
 ---
 
