@@ -218,11 +218,8 @@ router.tsx 기준. FSD_IA_NODEID_SSOT와 경로 일치. `@/pages/admin/{domain}/
 - **최적화**: Profiling 후 병목 확인 시에만. useMemo/useCallback은 무거운 계산·자식 리렌더 방지 필요 시만.
 ---
 
-## §7 검토 항목 (실행 완료)
+## §7 기능 세부 분리
 
-**Phase 3 실행 완료** (2026-02-12). 아래는 Task A·B·C 결과 반영.
-
-**실행 방법론**: [PHASE3_METHODOLOGY.md](PHASE3_METHODOLOGY.md) — 완수 기준, 달성 요구사항, 개발 전략, 검사·인테그레이션 상세.
 
 ### 7.1 Feature 분리 (De-coupling) — 완료
 
