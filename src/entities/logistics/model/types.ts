@@ -1,0 +1,34 @@
+/**
+ * Logistics Entity Types
+ * ERD 스키마 기반 타입 정의
+ */
+
+import { Timestamp } from '@/shared/lib/timestamp';
+
+export type LogisticsStatus = 'scheduled' | 'dispatched' | 'in_transit' | 'completed';
+
+export interface Logistics {
+  id: string;
+  platform_id?: string;
+  vehicleId: string;
+  scheduleDate: string;
+  scheduleTime: string;
+  departureAddress: string;
+  destinationAddress: string;
+  status: LogisticsStatus;
+  driverName?: string;
+  driverPhone?: string;
+  dispatchedAt?: Timestamp;
+  handoverTimestamp?: Timestamp;
+  pin?: string;  // 6자리 숫자 (암호화)
+  specialNotes?: string;
+  createdAt: Timestamp;
+}
+
+/** 탁송 생성 입력 */
+export type CreateLogisticsInput = Omit<
+  Logistics,
+  'id' | 'createdAt' | 'dispatchedAt' | 'handoverTimestamp'
+>;
+/** 탁송 수정 입력 (부분) */
+export type UpdateLogisticsInput = Partial<Omit<Logistics, 'id' | 'createdAt'>>;
