@@ -2,8 +2,20 @@
 
 **프로젝트**: CarivDealer (CARIV) — 중고차 딜러 플랫폼  
 **저장소**: https://github.com/Siegfriex/CARIV.git  
+**vercel링크**: https://carivfront.vercel.app?_vercel_share=uAiAkSogG2pAkLp8v1pLyOXe7jw066gz
+**vercel_1차도메인**: https://carivfront.vercel.app/
 
 ---
+## 0. 화면테스트방법
+-해당 도메인 접속시, 다음 화면은 미인증 상태임. <img width="2558" height="1296" alt="image" src="https://github.com/user-attachments/assets/c4b986f7-3d2a-4148-8303-58db3e793443" />
+-> 따라서-> 플로우 테스트 목적, **인증상태전환**은 다음과 같음.
+1. GNB 우상단 로그인 / 회원가입 버튼 클릭
+2. 다음 모달 팝업에서 **회원가입** 버튼 클릭.  <img width="2559" height="1295" alt="image" src="https://github.com/user-attachments/assets/764f6799-ec23-482c-8b6e-733037e17ba4" />
+3. 회원가입탭 - /signup 탭에서, **로그인**탭 클릭 <img width="243" height="41" alt="image" src="https://github.com/user-attachments/assets/a025de98-27f6-4e8b-9913-a789a29eebd0" />
+4. 다시, 로그인탭 - /login 탭에서 **로그인**탭 클릭 <img width="2559" height="1288" alt="image" src="https://github.com/user-attachments/assets/1489ffb5-7edb-47aa-978e-8db71fd60554" />
+5. 다음 화면 쇼잉시 성공 <img width="1537" height="1266" alt="image" src="https://github.com/user-attachments/assets/4f992aa2-de81-4096-bf58-dc820a1c6b07" />
+또는 <img width="1651" height="1279" alt="image" src="https://github.com/user-attachments/assets/e0c3f019-5f80-47f8-97f9-6e1df95589b1" />
+
 
 ## 1. 브랜치 전략
 
