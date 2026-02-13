@@ -1,7 +1,10 @@
 /**
  * 통합 에러 처리 유틸리티
  * API 호출 실패 시 에러 분류(네트워크·타임아웃·인증·서버 등) 및 사용자 친화 메시지·로깅·재시도 제공.
+ * Zod 검증 실패(ZodError) 시 VALIDATION_ERROR로 분류.
  */
+
+import { ZodError } from 'zod';
 
 /** 에러 분류 타입 (네트워크·타임아웃·검증·인증·서버·알수없음) */
 export enum ErrorType {
@@ -43,7 +46,26 @@ function hasStatus(e: unknown): e is { statusCode?: number; status?: number; mes
  * @param error - catch된 에러 (unknown)
  * @returns ErrorType·message·originalError·statusCode가 채워진 ApiError
  */
+/** ZodError → 사용자 메시지 */
+function formatZodError(zodError: ZodError): string {
+  const issues = zodError.issues;
+  if (issues.length === 0) return '입력 정보를 확인해주세요.';
+  const first = issues[0];
+  const path = first.path?.length ? first.path.join('.') : '';
+  const msg = first.message ?? '유효하지 않은 값입니다.';
+  return path ? `${path}: ${msg}` : msg;
+}
+
 export const analyzeError = (error: unknown): ApiError => {
+  // Zod 검증 에러
+  if (error instanceof ZodError) {
+    return {
+      type: ErrorType.VALIDATION_ERROR,
+      message: formatZodError(error),
+      originalError: error,
+    };
+  }
+
   // 네트워크 에러 감지
   if (
     (hasMessage(error) && (

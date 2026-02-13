@@ -1,9 +1,11 @@
 /**
  * 검차 엔티티 Zod 스키마 (런타임 검증)
+ * Graceful Degradation: API enum(MATCHING_COMPLETED 등) → mapApiInspectionStatusToFrontend → 프론트 enum
  */
 
 import { z } from 'zod';
 import { Timestamp, isTimestamp } from '@/shared/lib/timestamp';
+import { mapApiInspectionStatusToFrontend } from '@/shared/api/adapters';
 
 /** Timestamp 호환 스키마 */
 const timestampSchema = z.custom<Timestamp>(
@@ -11,7 +13,17 @@ const timestampSchema = z.custom<Timestamp>(
   { message: 'Invalid Timestamp' }
 );
 
-export const inspectionStatusSchema = z.enum(['pending', 'assigned', 'in_progress', 'completed']);
+/** 프론트 검차 상태 enum (검증용) */
+const frontendInspectionStatusEnum = z.enum(['pending', 'assigned', 'in_progress', 'completed', 'canceled', 'draft']);
+
+/**
+ * 검차 상태 스키마 (Graceful Degradation)
+ * API/ERD 값(MATCHING_COMPLETED 등) → 매퍼 → 프론트 enum. 미정의 값 시 'pending' 폴백.
+ */
+export const inspectionStatusSchema = z
+  .string()
+  .transform((val) => mapApiInspectionStatusToFrontend(val))
+  .pipe(frontendInspectionStatusEnum);
 
 export const locationSchema = z.object({
   address: z.string(),

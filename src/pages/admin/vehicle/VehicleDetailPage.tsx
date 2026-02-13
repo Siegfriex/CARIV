@@ -8,6 +8,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { LandingHeader } from '@/widgets/Header';
 import { LAYOUT_CLASSES } from '@/shared/config/layout';
+import { formatCurrencyManwon, formatMileageManKm } from '@/shared/lib/format';
 import { useVehicle } from '@/features/vehicle/register-form';
 import { VehicleStatusBadge } from '@/entities/vehicle/ui/VehicleStatusBadge';
 import { Button } from '@/shared/ui/Button';
@@ -99,7 +100,7 @@ export const VehicleDetailPage = () => {
                 상태: {statusLabel}
               </p>
               <p className="text-body text-gray-600 mb-2">
-                {vehicle.modelYear}년형 • {(parseInt(vehicle.mileage, 10) / 10000).toFixed(1)}만 km
+                {vehicle.modelYear}년형 • {formatMileageManKm(vehicle.mileage)}
               </p>
               {vehicle.manufacturer && (
                 <p className="text-body text-gray-600 mb-2">제조사: {vehicle.manufacturer}</p>
@@ -108,7 +109,7 @@ export const VehicleDetailPage = () => {
                 <p className="text-body text-gray-600 mb-2">차량번호: {vehicle.plateNumber}</p>
               )}
               {vehicle.price && (
-                <p className="text-h4 font-bold text-primary mt-4">희망가: {vehicle.price}</p>
+                <p className="text-h4 font-bold text-primary mt-4">희망가: {formatCurrencyManwon(vehicle.price)}</p>
               )}
             </div>
           </div>

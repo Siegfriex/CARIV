@@ -5,6 +5,7 @@
 
 import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from '@/shared/ui/Table';
 import { VehicleStatusBadge } from '@/entities/vehicle/ui/VehicleStatusBadge';
+import { formatCurrencyManwon, formatMileageManKm } from '@/shared/lib/format';
 import type { Vehicle } from '@/entities/vehicle/model/types';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 
@@ -55,9 +56,9 @@ export const VehicleTable = ({
               </div>
             </TableCell>
             <TableCell>{vehicle.modelYear}년</TableCell>
-            <TableCell>{parseInt(vehicle.mileage).toLocaleString()}km</TableCell>
+            <TableCell>{formatMileageManKm(vehicle.mileage)}</TableCell>
             <TableCell>
-              {vehicle.price ? `${parseInt(vehicle.price).toLocaleString()}만원` : '-'}
+              {formatCurrencyManwon(vehicle.price ?? '')}
             </TableCell>
             <TableCell>
               <VehicleStatusBadge status={vehicle.status} size="sm" />

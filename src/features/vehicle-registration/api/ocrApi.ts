@@ -17,11 +17,31 @@ export interface OcrResponse {
 
 /**
  * OCR 등록원부 처리 (차량번호 → 등록원부 정보 추출)
- * @param carNo - 차량번호
+ * 문서 §3: POST /vehicles/ocr/parse, body: { vehicleNo, fileId? }
+ * @param vehicleNo - 차량번호 (문서 vehicleNo)
+ * @param fileId - 업로드된 파일 ID (2단계 플로우 시, 선택)
  * @returns OcrResponse
  */
-export const ocrRegistration = async (carNo: string): Promise<OcrResponse> => {
-  return await apiClient.post<OcrResponse>(API_ENDPOINTS.VEHICLE.OCR_REGISTRATION, {
-    car_no: carNo,
-  });
+export const ocrRegistration = async (
+  vehicleNo: string,
+  fileId?: number
+): Promise<OcrResponse> => {
+  const body: { vehicleNo: string; fileId?: number } = { vehicleNo };
+  if (fileId != null) body.fileId = fileId;
+  const raw = await apiClient.post<
+    | { ok: boolean; result?: { extracted?: Record<string, unknown> }; message?: string | null }
+    | OcrResponse
+  >(API_ENDPOINTS.VEHICLE.OCR_PARSE, body);
+
+  const extracted = (raw as { result?: { extracted?: Record<string, unknown> } })?.result?.extracted;
+  if (extracted) {
+    return {
+      vin: String(extracted.vin ?? ''),
+      manufacturer: String(extracted.manufacturer ?? extracted.brand ?? ''),
+      model: String(extracted.model ?? extracted.modelName ?? ''),
+      year: String(extracted.year ?? extracted.modelYear ?? ''),
+      mileage: String(extracted.mileage ?? extracted.mileageKm ?? ''),
+    };
+  }
+  return raw as OcrResponse;
 };

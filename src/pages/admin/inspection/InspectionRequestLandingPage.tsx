@@ -6,7 +6,7 @@
  */
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { logEventWithHypothesis } from '@/shared/lib/logEvent';
 import { LandingHeader } from '@/widgets/Header/ui/LandingHeader';
 import { ProgressSidebar } from '@/widgets/ProgressSidebar';
@@ -17,11 +17,14 @@ import { Search } from 'lucide-react';
 
 export const InspectionRequestLandingPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
+  const vehicleId = searchParams.get('vehicleId') ?? '';
 
   const handleStartRequest = () => {
     logEventWithHypothesis('InspectionRequestLandingPage:handleStartRequest', '검차신청 시작→step1', { to: '/inspections/request/step1' }, 'H_CTA2');
-    navigate('/inspections/request/step1');
+    const path = vehicleId ? `/inspections/request/step1?vehicleId=${encodeURIComponent(vehicleId)}` : '/inspections/request/step1';
+    navigate(path);
   };
 
   const handleSaveDraft = () => {

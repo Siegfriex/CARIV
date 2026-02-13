@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Car, Calendar, DollarSign, Eye } from 'lucide-react';
 import { LandingHeader } from '@/widgets/Header';
 import { LAYOUT_CLASSES } from '@/shared/config/layout';
+import { formatCurrencyManwon } from '@/shared/lib/format';
 import { useSalesHistory } from '@/features/sale';
 
 export const SalesHistoryPage = () => {
@@ -69,7 +70,7 @@ export const SalesHistoryPage = () => {
                       <td className="p-4">
                         <div className="flex items-center gap-1">
                           <DollarSign className="w-4 h-4 text-fmax-primary" />
-                          <span className="font-bold text-fmax-primary">{sale.salePrice.toLocaleString()}만원</span>
+                          <span className="font-bold text-fmax-primary">{formatCurrencyManwon(sale.salePrice)}</span>
                         </div>
                       </td>
                       <td className="p-4">

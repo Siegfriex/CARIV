@@ -1,107 +1,134 @@
 /**
  * API 엔드포인트 중앙 관리 (SSOT)
- * 프론트엔드-백엔드 엔드포인트 일관성 보장.
+ * CarivDealer_api_v1.md RESTful 경로 기준.
  * 참조: docs/CarivDealer_api_v1.md
  */
 
-/** 회원·차량·검차·거래·경매·탁송·정산·리포트·설정·주문·결제·주소·리뷰·딜러서류 엔드포인트 상수 */
-export const API_ENDPOINTS = {
-  /** 회원 가입·사업자 인증 */
-  MEMBER: {
-    REGISTER: 'member/dealer/register',
-    VERIFY_BUSINESS: 'verifyBusinessAPI',
+/** REST 경로 템플릿·빌더 */
+export const API_PATHS = {
+  /** Auth */
+  AUTH: {
+    LOGIN: 'auth/login',
+    KAKAO_LOGIN: 'auth/kakao/login',
+    GOOGLE_LOGIN: 'auth/google/login',
+    REFRESH: 'auth/refresh',
+    LOGOUT: 'auth/logout',
+    FILES: 'auth/files',
   },
 
-  /** 차량 OCR·검차 신청·통계 */
+  /** Signup */
+  SIGNUP: {
+    STATUS: 'signup/status',
+    DEALER: 'signup/dealer',
+    DEALER_SUBMIT: 'signup/dealer/submit',
+    DEALER_BUSINESS_VERIFY: 'signup/dealer/business-number/verify',
+    SETTLEMENT: 'signup/settlement',
+  },
+
+  /** Vehicle */
   VEHICLE: {
-    OCR_REGISTRATION: 'ocrRegistrationAPI',
-    INSPECTION_REQUEST: 'inspectionRequestAPI',
-    GET_STATISTICS: 'getVehicleStatisticsAPI',
-  },
-
-  /** 검차 배정·결과 업로드/조회 */
-  INSPECTION: {
-    ASSIGN: 'inspectionAssignAPI',
-    UPLOAD_RESULT: 'inspectionUploadResultAPI',
-    GET_RESULT: 'inspectionGetResultAPI',
-    ASSIGN_EVALUATOR: 'assignEvaluatorAPI',
-  },
-
-  /** 거래(판매방식·제안 수락·TTL) */
-  TRADE: {
-    CHANGE_SALE_METHOD: 'changeSaleMethodAPI',
-    ACCEPT_PROPOSAL: 'acceptProposalAPI',
-    MANAGE_PROPOSAL_TTL: 'manageProposalTTLAPI',
-  },
-
-  /** 경매 입찰·즉시구매 */
-  AUCTION: {
-    BID: 'bidAPI',
-    BUY_NOW: 'buyNowAPI',
-  },
-
-  /** 탁송 예약·배차·인계 승인 */
-  LOGISTICS: {
-    SCHEDULE: 'logisticsScheduleAPI',
-    DISPATCH_REQUEST: 'logisticsDispatchRequestAPI',
-    DISPATCH_CONFIRM: 'logisticsDispatchConfirmAPI',
-    HANDOVER_APPROVE: 'handoverApproveAPI',
-  },
-
-  /** 정산 알림 */
-  SETTLEMENT: {
-    NOTIFY: 'settlementNotifyAPI',
-  },
-
-  /** 차량 상태 리포트 생성·저장 */
-  REPORT: {
-    GENERATE: 'generateReportAPI',
-    SAVE: 'saveReportAPI',
-  },
-
-  /** 설정(Google Maps API 키 등) */
-  CONFIG: {
-    GOOGLE_MAPS_API_KEY: 'getGoogleMapsApiKeyAPI',
-  },
-
-  /** 주문 생성·조회·상태 변경 (Phase 1.3) */
-  ORDER: {
-    CREATE: 'createOrderAPI',
-    GET: 'getOrderAPI',
-    UPDATE_STATUS: 'updateOrderStatusAPI',
-  },
-
-  /** 결제 생성·조회·환불 (Phase 1.3) */
-  PAYMENT: {
-    CREATE: 'createPaymentAPI',
-    GET: 'getPaymentAPI',
-    REFUND: 'refundPaymentAPI',
-  },
-
-  /** 주소 CRUD (Phase 2.2) */
-  ADDRESS: {
-    CREATE: 'createAddressAPI',
-    GET: 'getAddressAPI',
-    LIST: 'listAddressesAPI',
-    UPDATE: 'updateAddressAPI',
-    DELETE: 'deleteAddressAPI',
-  },
-
-  /** 리뷰 작성·목록 (Phase 3.1) */
-  REVIEW: {
-    CREATE: 'createReviewAPI',
-    LIST: 'listReviewsAPI',
-  },
-
-  /** 딜러 서류 업로드·승인·목록 (Phase 3.2) */
-  SELLER_DOCS: {
-    UPLOAD: 'uploadDocAPI',
-    APPROVE: 'approveDocAPI',
-    LIST: 'listDocsAPI',
+    FILES: 'vehicle/files',
+    LOOKUP: 'vehicles/lookup',
+    OCR_PARSE: 'vehicles/ocr/parse',
+    LIST: 'vehicles',
+    SEARCH: 'vehicles/search',
+    byId: (id: string) => `vehicles/${id}` as const,
+    inspections: (vehicleId: string) => `vehicles/${vehicleId}/inspections` as const,
+    inspectionsLatest: (vehicleId: string) => `vehicles/${vehicleId}/inspections/latest` as const,
   },
 } as const;
 
-/** API_ENDPOINTS에 정의된 모든 엔드포인트 경로 문자열 유니온 타입 (타입 안전성 보장) */
+/**
+ * 경로 파라미터가 필요한 엔드포인트 빌더
+ * @deprecated API_PATHS 사용. 하위 호환용 유지.
+ */
+export const API_ENDPOINTS = {
+  MEMBER: {
+    REGISTER: API_PATHS.SIGNUP.DEALER,
+    VERIFY_BUSINESS: API_PATHS.SIGNUP.DEALER_BUSINESS_VERIFY,
+  },
+
+  VEHICLE: {
+    OCR_PARSE: API_PATHS.VEHICLE.OCR_PARSE,
+    /** @deprecated OCR_PARSE 사용 */
+    OCR_REGISTRATION: API_PATHS.VEHICLE.OCR_PARSE,
+    /** 경로: vehicles/{vehicleId}/inspections — buildVehicleInspectionsPath(vehicleId) 사용 */
+    INSPECTION_REQUEST: 'vehicles/{vehicleId}/inspections',
+    INSPECTIONS_LATEST: 'vehicles/{vehicleId}/inspections/latest',
+    GET_STATISTICS: 'vehicles/statistics',
+  },
+
+  INSPECTION: {
+    ASSIGN: 'inspections/assign',
+    UPLOAD_RESULT: 'inspections/upload-result',
+    GET_RESULT: 'inspections/result',
+    ASSIGN_EVALUATOR: 'inspections/assign-evaluator',
+  },
+
+  TRADE: {
+    CHANGE_SALE_METHOD: 'trade/sale-method',
+    ACCEPT_PROPOSAL: 'trade/proposal/accept',
+    MANAGE_PROPOSAL_TTL: 'trade/proposal/ttl',
+  },
+
+  AUCTION: {
+    BID: 'auctions/bid',
+    BUY_NOW: 'auctions/buy-now',
+  },
+
+  LOGISTICS: {
+    SCHEDULE: 'logistics/schedule',
+    DISPATCH_REQUEST: 'logistics/dispatch/request',
+    DISPATCH_CONFIRM: 'logistics/dispatch/confirm',
+    HANDOVER_APPROVE: 'logistics/handover/approve',
+  },
+
+  SETTLEMENT: {
+    NOTIFY: 'settlements/notify',
+  },
+
+  REPORT: {
+    GENERATE: 'reports/generate',
+    SAVE: 'reports/save',
+  },
+
+  CONFIG: {
+    GOOGLE_MAPS_API_KEY: 'config/google-maps-api-key',
+  },
+
+  ORDER: {
+    CREATE: 'orders',
+    GET: 'orders',
+    UPDATE_STATUS: 'orders/status',
+  },
+
+  PAYMENT: {
+    CREATE: 'payments',
+    GET: 'payments',
+    REFUND: 'payments/refund',
+  },
+
+  ADDRESS: {
+    CREATE: 'addresses',
+    GET: 'addresses',
+    LIST: 'addresses',
+    UPDATE: 'addresses',
+    DELETE: 'addresses',
+  },
+
+  REVIEW: {
+    CREATE: 'reviews',
+    LIST: 'reviews',
+  },
+
+  SELLER_DOCS: {
+    UPLOAD: 'seller-docs/upload',
+    APPROVE: 'seller-docs/approve',
+    LIST: 'seller-docs',
+  },
+} as const;
+
+/** API_ENDPOINTS에 정의된 모든 엔드포인트 경로 문자열 유니온 타입 */
 export type ApiEndpoint =
   | typeof API_ENDPOINTS.MEMBER[keyof typeof API_ENDPOINTS.MEMBER]
   | typeof API_ENDPOINTS.VEHICLE[keyof typeof API_ENDPOINTS.VEHICLE]
@@ -118,14 +145,35 @@ export type ApiEndpoint =
   | typeof API_ENDPOINTS.REVIEW[keyof typeof API_ENDPOINTS.REVIEW]
   | typeof API_ENDPOINTS.SELLER_DOCS[keyof typeof API_ENDPOINTS.SELLER_DOCS];
 
+/** vehicleId 유효성 검사 (routeManager 정책과 동기화) */
+function requireVehicleId(vehicleId: unknown): string {
+  const id = typeof vehicleId === 'string' ? vehicleId.trim() : '';
+  if (!id) {
+    throw new Error('vehicleId가 필요합니다. 차량을 선택해주세요.');
+  }
+  return id;
+}
+
+/** vehicleId로 검차 신청 경로 생성 */
+export function buildVehicleInspectionsPath(vehicleId: string): string {
+  const id = requireVehicleId(vehicleId);
+  return API_ENDPOINTS.VEHICLE.INSPECTION_REQUEST.replace('{vehicleId}', id);
+}
+
+/** vehicleId로 최신 검차 상태 경로 생성 */
+export function buildVehicleInspectionsLatestPath(vehicleId: string): string {
+  const id = requireVehicleId(vehicleId);
+  return API_ENDPOINTS.VEHICLE.INSPECTIONS_LATEST.replace('{vehicleId}', id);
+}
+
 /**
  * 문자열이 정의된 API 엔드포인트인지 검증.
- * @param endpoint - 검사할 경로 문자열
- * @returns ApiEndpoint이면 true
  */
 export function isValidEndpoint(endpoint: string): endpoint is ApiEndpoint {
   const allEndpoints = Object.values(API_ENDPOINTS).flatMap(category =>
-    Object.values(category)
+    typeof category === 'object' && category !== null
+      ? Object.values(category).filter((v): v is string => typeof v === 'string')
+      : []
   );
   return allEndpoints.includes(endpoint as ApiEndpoint);
 }

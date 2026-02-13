@@ -5,6 +5,7 @@
  */
 
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { formatMileageManKm } from '@/shared/lib/format';
 import { VehicleInfoPanel } from '@/widgets/VehicleInfoPanel';
 import { FeedbackBlock } from '@/widgets/FeedbackBlock';
 
@@ -38,7 +39,7 @@ export function TradeDetailCard({
   const manufacturer = vehicle?.manufacturer ?? 'Hyundai';
   const modelName = vehicle?.modelName ?? 'G70 3T 스포츠 엘리트';
   const modelYear = vehicle?.modelYear ?? '2018';
-  const mileage = vehicle?.mileage ? `${(parseInt(vehicle.mileage, 10) / 10000).toFixed(1)}만 km` : '14.6만 km';
+  const mileage = formatMileageManKm(vehicle?.mileage ?? '');
 
   return (
     <div data-node-id="1302:27093">

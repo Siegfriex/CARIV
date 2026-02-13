@@ -8,6 +8,7 @@ import { CreditCard, DollarSign, Percent, FileText, Download, Printer, Truck, Ba
 import { LandingHeader } from '@/widgets/Header';
 import { GnbMinimalSidebar } from '@/widgets/GnbMinimalSidebar';
 import { LAYOUT_CLASSES } from '@/shared/config/layout';
+import { formatCurrencyManwon } from '@/shared/lib/format';
 import { useSettlement } from '@/features/settlement';
 
 export const SettlementDetailPage = () => {
@@ -99,7 +100,7 @@ export const SettlementDetailPage = () => {
                   <DollarSign className="w-5 h-5 text-fmax-primary" />
                   <span className="text-fmax-text-main">판매가</span>
                 </div>
-                <span className="font-bold text-fmax-text-main">{settlement.salePrice.toLocaleString()}만원</span>
+                <span className="font-bold text-fmax-text-main">{formatCurrencyManwon(settlement.salePrice)}</span>
               </div>
 
               <div className="flex justify-between items-center py-3 border-b border-fmax-border">
@@ -107,7 +108,7 @@ export const SettlementDetailPage = () => {
                   <Percent className="w-5 h-5 text-gray-600" />
                   <span className="text-fmax-text-main">플랫폼 수수료 ({settlement.platformFeeRate}%)</span>
                 </div>
-                <span className="text-gray-600">-{settlement.platformFee.toLocaleString()}만원</span>
+                <span className="text-gray-600">-{formatCurrencyManwon(settlement.platformFee)}</span>
               </div>
 
               {settlement.logisticsFee !== undefined && (
@@ -116,7 +117,7 @@ export const SettlementDetailPage = () => {
                     <Truck className="w-5 h-5 text-gray-600" />
                     <span className="text-fmax-text-main">탁송비</span>
                   </div>
-                  <span className="text-gray-600">-{settlement.logisticsFee.toLocaleString()}만원</span>
+                  <span className="text-gray-600">-{formatCurrencyManwon(settlement.logisticsFee)}</span>
                 </div>
               )}
 
@@ -126,7 +127,7 @@ export const SettlementDetailPage = () => {
                     <FileText className="w-5 h-5 text-gray-600" />
                     <span className="text-fmax-text-main">검차비</span>
                   </div>
-                  <span className="text-gray-600">-{settlement.inspectionFee.toLocaleString()}만원</span>
+                  <span className="text-gray-600">-{formatCurrencyManwon(settlement.inspectionFee)}</span>
                 </div>
               )}
 
@@ -135,12 +136,12 @@ export const SettlementDetailPage = () => {
                   <FileText className="w-5 h-5 text-fmax-success" />
                   <span className="text-fmax-text-main">부가세 환급 ({settlement.vatRefundRate}%)</span>
                 </div>
-                <span className="font-bold text-fmax-success">+{settlement.vatRefund.toLocaleString()}만원</span>
+                <span className="font-bold text-fmax-success">+{formatCurrencyManwon(settlement.vatRefund)}</span>
               </div>
 
               <div className="flex justify-between items-center py-4 bg-fmax-surface rounded-lg px-4 mt-4">
                 <span className="text-lg font-bold text-fmax-text-main">최종 정산 금액</span>
-                <span className="text-2xl font-bold text-fmax-primary">{settlement.finalAmount.toLocaleString()}만원</span>
+                <span className="text-2xl font-bold text-fmax-primary">{formatCurrencyManwon(settlement.finalAmount)}</span>
               </div>
             </div>
           </div>

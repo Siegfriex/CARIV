@@ -21,6 +21,7 @@ import { Card } from '@/shared/ui/Card';
 import { Modal } from '@/shared/ui/Modal';
 import { MessageModal } from '@/shared/ui/MessageModal';
 import { Clock, Building } from 'lucide-react';
+import { formatCurrencyManwon } from '@/shared/lib/format';
 
 const transactionProgressSteps: ProgressStep[] = [
   { id: 'upload', label: '차량 업로드', status: 'completed' },
@@ -112,11 +113,11 @@ export const AuctionDetailPage = () => {
             <div className="flex flex-wrap gap-6 text-body text-gray-700">
               <div>
                 <span className="text-caption text-gray-500">경매 시작가</span>
-                <p className="font-bold text-gray-900">1,000만원</p>
+                <p className="font-bold text-gray-900">{formatCurrencyManwon(1000)}</p>
               </div>
               <div>
                 <span className="text-caption text-gray-500">즉시 구매가</span>
-                <p className="font-bold text-gray-900">1,500만원</p>
+                <p className="font-bold text-gray-900">{formatCurrencyManwon(1500)}</p>
               </div>
             </div>
             <Button variant="secondary" size="sm" className="mt-4" onClick={handleStartPrice}>
@@ -126,7 +127,7 @@ export const AuctionDetailPage = () => {
 
           <SaleMethodCards
             currentSaleType="경매"
-            currentPrice="1,500만원"
+            currentPrice={formatCurrencyManwon(1500)}
             onSaleMethodChange={() => setSaleMethodConfirmModalOpen(true)}
             onPriceEdit={handlePriceEdit}
             onArchive={() => {}}
@@ -144,7 +145,7 @@ export const AuctionDetailPage = () => {
                     <div>
                       <p className="text-body font-bold text-gray-900">Global Motors Inc.</p>
                       <p className="text-caption text-gray-500">33바 3333 · Carnival KA4</p>
-                      <p className="text-h4 font-bold text-primary mt-1">2,850만원</p>
+                      <p className="text-h4 font-bold text-primary mt-1">{formatCurrencyManwon(2850)}</p>
                       <p className="text-caption text-gray-500">제안일: 2025-05-20 <span className="text-orange-500">만료됨</span></p>
                     </div>
                   </div>
@@ -161,7 +162,7 @@ export const AuctionDetailPage = () => {
                     <div>
                       <p className="text-body font-bold text-gray-900">Auto Export Co.</p>
                       <p className="text-caption text-gray-500">33바 3333 · Carnival KA4</p>
-                      <p className="text-h4 font-bold text-primary mt-1">2,750만원</p>
+                      <p className="text-h4 font-bold text-primary mt-1">{formatCurrencyManwon(2750)}</p>
                       <p className="text-caption text-gray-500">제안일: 2025-05-19 <span className="text-orange-500">만료됨</span></p>
                     </div>
                   </div>

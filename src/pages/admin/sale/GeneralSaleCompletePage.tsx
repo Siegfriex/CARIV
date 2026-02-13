@@ -12,6 +12,7 @@ import { LAYOUT_CLASSES } from '@/shared/config/layout';
 import { getRegisterFlowSteps } from '@/shared/config/registerFlowSteps';
 import { Button } from '@/shared/ui/Button';
 import { Tag } from 'lucide-react';
+import { formatCurrencyManwon } from '@/shared/lib/format';
 
 export const GeneralSaleCompletePage = () => {
   const { vehicleId } = useParams<{ vehicleId: string }>();
@@ -54,7 +55,7 @@ export const GeneralSaleCompletePage = () => {
             </p>
             {hopePrice && (
               <p className="text-body text-gray-600 mb-4">
-                희망가: {hopePrice}만원
+                희망가: {formatCurrencyManwon(hopePrice)}
               </p>
             )}
             <div className="flex flex-wrap gap-4 justify-center" data-node-id="794:4197">

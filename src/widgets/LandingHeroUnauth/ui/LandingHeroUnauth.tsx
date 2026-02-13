@@ -6,7 +6,7 @@
 import { ChevronRight } from 'lucide-react';
 import { LAYOUT_CLASSES } from '@/shared/config/layout';
 import { Button } from '@/shared/ui/Button';
-import landingImage from '@img/LANDING.png';
+import landingImage from '@img/LANDING.svg';
 
 export interface LandingHeroUnauthProps {
   email: string;

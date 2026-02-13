@@ -4,6 +4,8 @@
  * @see docs/figmaMCP/impl_plans/794-4200_794-4371_구현계획.md
  */
 
+import { formatMileageManKm } from '@/shared/lib/format';
+
 const ROW_ITEMS = [
   { label: '제조사', key: 'manufacturer' as const },
   { label: '모델', key: 'modelName' as const },
@@ -73,11 +75,11 @@ function getRowValue(
         : key === 'modelYear'
           ? '2018'
           : key === 'mileage'
-            ? '14.6만 km'
+            ? formatMileageManKm('')
             : '-';
   }
-  if (key === 'mileage' && vehicle.mileage) {
-    return `${(parseInt(vehicle.mileage, 10) / 10000).toFixed(1)}만 km`;
+  if (key === 'mileage') {
+    return formatMileageManKm(vehicle.mileage ?? '');
   }
   if (key === 'fuel') {
     return vehicle.fuelType ?? '-';

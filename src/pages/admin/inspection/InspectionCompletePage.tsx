@@ -118,7 +118,7 @@ export const InspectionCompletePage = () => {
                 manufacturer: 'Hyundai',
                 modelName: vehicleModel,
                 modelYear: vehicleYear,
-                mileage: '14.6만 km',
+                mileage: '146000',
                 fuelType: '-',
               }}
               nodeIdPrefix="1425"

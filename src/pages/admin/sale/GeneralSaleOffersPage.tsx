@@ -9,6 +9,7 @@ import { LandingHeader } from '@/widgets/Header';
 import { LAYOUT_CLASSES } from '@/shared/config/layout';
 import { apiClient } from '@/shared/api/apiClient';
 import { useToast } from '@/shared/ui/Toast';
+import { formatCurrencyManwon } from '@/shared/lib/format';
 
 interface Offer {
   id: string;
@@ -41,7 +42,7 @@ export const GeneralSaleOffersPage = () => {
         {
           id: 'offer-001',
           bidderName: 'Global Motors Inc.',
-          amount: '2,850',
+          amount: '2850',
           date: '2025-05-20',
           expiresAt: '2025-05-27',
           vehicleId: 'v-106',
@@ -50,7 +51,7 @@ export const GeneralSaleOffersPage = () => {
         {
           id: 'offer-002',
           bidderName: 'Auto Export Co.',
-          amount: '2,750',
+          amount: '2750',
           date: '2025-05-19',
           expiresAt: '2025-05-26',
           vehicleId: 'v-106',
@@ -132,7 +133,7 @@ export const GeneralSaleOffersPage = () => {
                     <div className="flex items-center gap-4 mt-3">
                       <div className="flex items-center gap-2">
                         <DollarSign className="w-4 h-4 text-fmax-primary" />
-                        <span className="text-xl font-bold text-fmax-primary">{offer.amount}만원</span>
+                        <span className="text-xl font-bold text-fmax-primary">{formatCurrencyManwon(offer.amount)}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-500">
                         <Clock className="w-4 h-4" />

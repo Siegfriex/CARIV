@@ -6,6 +6,7 @@
 import { RefreshCw, Wallet, Archive, Trash2 } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
 import { Card } from '@/shared/ui/Card';
+import { formatCurrencyManwon } from '@/shared/lib/format';
 
 export interface SaleMethodCardsProps {
   onSaleMethodChange?: () => void;
@@ -24,7 +25,7 @@ export function SaleMethodCards({
   onArchive,
   onDelete,
   currentSaleType = '일반 판매',
-  currentPrice = '1,300만원',
+  currentPrice = formatCurrencyManwon(1300),
 }: SaleMethodCardsProps) {
   return (
     <section className="mb-8">

@@ -14,6 +14,7 @@ import { TradeDetailCard } from '@/widgets/TradeDetailCard';
 import { SaleMethodCards } from '@/widgets/SaleMethodCards';
 import { InspectionDetailModal } from '@/widgets/InspectionDetailModal';
 import { LAYOUT_CLASSES } from '@/shared/config/layout';
+import { formatCurrencyManwon } from '@/shared/lib/format';
 import { useVehicle } from '@/features/vehicle/register-form';
 import { Button } from '@/shared/ui/Button';
 import { Card } from '@/shared/ui/Card';
@@ -92,7 +93,7 @@ export const TradeDetailPage = () => {
 
             <SaleMethodCards
               currentSaleType="일반 판매"
-              currentPrice={vehicle?.price ? `${parseInt(vehicle.price, 10).toLocaleString()}만원` : '1,300만원'}
+              currentPrice={formatCurrencyManwon(vehicle?.price ?? '')}
               onSaleMethodChange={() => setSaleMethodConfirmModalOpen(true)}
               onPriceEdit={() => vehicleId && navigate(`/vehicles/${vehicleId}/sale/price`)}
               onArchive={() => {}}
@@ -110,7 +111,7 @@ export const TradeDetailPage = () => {
                       <div>
                         <p className="text-body font-bold text-gray-900">Global Motors Inc.</p>
                         <p className="text-caption text-gray-500">33바 3333 · Carnival KA4</p>
-                        <p className="text-h4 font-bold text-primary mt-1">2,850만원</p>
+                        <p className="text-h4 font-bold text-primary mt-1">{formatCurrencyManwon(2850)}</p>
                         <p className="text-caption text-gray-500">제안일: 2025-05-20 <span className="text-orange-500">만료됨</span></p>
                       </div>
                     </div>
@@ -127,7 +128,7 @@ export const TradeDetailPage = () => {
                       <div>
                         <p className="text-body font-bold text-gray-900">Auto Export Co.</p>
                         <p className="text-caption text-gray-500">33바 3333 · Carnival KA4</p>
-                        <p className="text-h4 font-bold text-primary mt-1">2,750만원</p>
+                        <p className="text-h4 font-bold text-primary mt-1">{formatCurrencyManwon(2750)}</p>
                         <p className="text-caption text-gray-500">제안일: 2025-05-19 <span className="text-orange-500">만료됨</span></p>
                       </div>
                     </div>

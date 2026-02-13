@@ -6,7 +6,9 @@
 
 import { mockResponses } from './mockData';
 import { analyzeError } from '@/shared/lib/errorHandler';
-import { API_ENDPOINTS } from '@/shared/config/apiEndpoints';
+import { getAuthHeader } from '@/shared/lib/apiAuth';
+import { API_ENDPOINTS, buildVehicleInspectionsPath } from '@/shared/config/apiEndpoints';
+import type { InspectionRequestApiBody } from './adapters';
 import { isRunDev } from '@/shared/config/runDev';
 
 /** API Base URL - 백엔드 엔드포인트 */
@@ -77,6 +79,7 @@ async function apiCall<T>(
 
   const defaultHeaders: HeadersInit = {
     'Content-Type': 'application/json',
+    ...getAuthHeader(),
   };
 
   try {
@@ -145,27 +148,24 @@ async function apiCall<T>(
 export const apiClient = {
   /** 회원 가입·사업자 인증 API */
   member: {
-    register: (data: {
-      email: string;
-      password: string;
-      dealer_name: string;
-      phone: string;
-      terms_agreed: boolean;
-    }) => apiCall<{ success: boolean; member_id: string; message: string }>(
-      API_ENDPOINTS.MEMBER.REGISTER,
-      { method: 'POST', body: JSON.stringify(data) }
-    ),
+    /** PUT /signup/dealer — 딜러 인증 Draft 저장 (문서 §1.1) */
+    register: (data: import('./adapters').SignupDealerApiBody) =>
+      apiCall<{ ok: boolean; result: { saved: boolean; dealerVerificationStatus: string; nextStep: number }; message: string | null }>(
+        API_ENDPOINTS.MEMBER.REGISTER,
+        { method: 'PUT', body: JSON.stringify(data) }
+      ),
 
-    verifyBusiness: async (businessRegistrationImage: File) => {
-      const formData = new FormData();
-      formData.append('business_registration_image', businessRegistrationImage);
-
+    verifyBusiness: async (businessNo: string) => {
       try {
         const response = await fetchWithTimeout(
           `${API_BASE_URL}/${API_ENDPOINTS.MEMBER.VERIFY_BUSINESS}`,
           {
             method: 'POST',
-            body: formData,
+            headers: {
+              'Content-Type': 'application/json',
+              ...getAuthHeader(),
+            },
+            body: JSON.stringify({ businessNo }),
           },
           API_TIMEOUT
         );
@@ -192,6 +192,7 @@ export const apiClient = {
           `${API_BASE_URL}/${API_ENDPOINTS.VEHICLE.OCR_REGISTRATION}`,
           {
             method: 'POST',
+            headers: { ...getAuthHeader() },
             body: formData,
           },
           OCR_TIMEOUT
@@ -239,22 +240,21 @@ export const apiClient = {
     },
 
     inspection: {
-      request: (vehicleId: string, data: {
-        preferred_date: string;
-        preferred_time: string;
-      }) => apiCall<{ success: boolean; inspection_id: string; message: string }>(
-        API_ENDPOINTS.VEHICLE.INSPECTION_REQUEST,
-        {
-          method: 'POST',
-          body: JSON.stringify({ vehicle_id: vehicleId, ...data }),
-        },
-        undefined,
-        () => ({
-          success: true,
-          inspection_id: `insp-${Date.now()}`,
-          message: '검차 신청이 완료되었습니다.',
-        })
-      ),
+      /** POST /vehicles/{vehicleId}/inspections — 문서 §3.1 바디 구조 */
+      request: (vehicleId: string, body: InspectionRequestApiBody) =>
+        apiCall<{ ok: boolean; result: { inspectionId: number; vehicleId: number; status: string }; message: string | null }>(
+          buildVehicleInspectionsPath(vehicleId),
+          {
+            method: 'POST',
+            body: JSON.stringify(body),
+          },
+          undefined,
+          () => ({
+            ok: true,
+            result: { inspectionId: Date.now(), vehicleId: Number(vehicleId) || 0, status: 'REQUESTED' },
+            message: null,
+          })
+        ),
     },
   },
 
@@ -290,6 +290,7 @@ export const apiClient = {
           `${API_BASE_URL}/${API_ENDPOINTS.INSPECTION.UPLOAD_RESULT}`,
           {
             method: 'POST',
+            headers: { ...getAuthHeader() },
             body: formData,
           },
           API_TIMEOUT
@@ -572,6 +573,7 @@ export const apiClient = {
       `${API_BASE_URL}/${endpoint}`,
       {
         method: 'POST',
+        headers: { ...getAuthHeader() },
         body: formData,
       },
       API_TIMEOUT

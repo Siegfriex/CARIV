@@ -8,6 +8,7 @@
 
 import { Card } from '@/shared/ui/Card';
 import { ImageWithFallback } from '@/shared/ui/ImageWithFallback';
+import { formatCurrencyManwon, formatTime, formatMileageManKm } from '@/shared/lib/format';
 import { VehicleStatusBadge } from './VehicleStatusBadge';
 import { StatusBadge } from '@/shared/ui/StatusBadge';
 import { VEHICLE_STATUS_COLORS, VEHICLE_STATUS_COLORS_1636, TRADE_LIST_STATUS_LABELS } from '@/entities/vehicle/model/constants';
@@ -25,17 +26,6 @@ interface VehicleCardProps {
   statusLabelOverride?: string;
 }
 
-function formatTime(ts: { toDate?: () => Date } | Date): string {
-  try {
-    const date = ts && typeof (ts as { toDate?: () => Date }).toDate === 'function'
-      ? (ts as { toDate: () => Date }).toDate()
-      : ts instanceof Date ? ts : new Date();
-    return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-  } catch {
-    return '--:--:--';
-  }
-}
-
 /** Figma 1636-10115: 메인 랜딩 카드 배지 (1년보증, 단순교환무사고) */
 const CARD_TAGS_1636 = ['1년보증', '단순교환무사고'];
 
@@ -50,10 +40,10 @@ export const VehicleCard = ({ vehicle, onClick, className = '', variant = 'defau
   const statusColor1636 = VEHICLE_STATUS_COLORS_1636[vehicle.status as VehicleStatus];
   const statusLabel1636 = statusLabelOverride ?? TRADE_LIST_STATUS_LABELS[vehicle.status as VehicleStatus];
 
-  const mileageStr = vehicle.mileage ? `${(parseInt(vehicle.mileage, 10) / 10000).toFixed(1)}만 km` : '-- 만 km';
+  const mileageStr = formatMileageManKm(vehicle.mileage);
   const yearStr = vehicle.modelYear ? `${vehicle.modelYear}년형` : '---- 년형';
-  const priceStr = vehicle.price ? `${parseInt(vehicle.price, 10).toLocaleString()}만원` : '--- 만원';
-  const newCarPriceStr = vehicle.price ? `신차 ${(parseInt(vehicle.price, 10) * 1.53).toFixed(0)}만원` : '신차 —만원';
+  const priceStr = formatCurrencyManwon(vehicle.price ?? '');
+  const newCarPriceStr = vehicle.price ? `신차 ${formatCurrencyManwon(parseInt(vehicle.price, 10) * 1.53)}` : formatCurrencyManwon('', '신차 --- 만원');
 
   if (isMainLanding) {
     return (
@@ -170,16 +160,16 @@ export const VehicleCard = ({ vehicle, onClick, className = '', variant = 'defau
       <div className="p-4">
         <h3 className="text-h4 font-bold text-gray-900 mb-1">{vehicle.modelName}</h3>
         <p className="text-body text-gray-600 mb-2">
-          {vehicle.modelYear}년형 • {(parseInt(vehicle.mileage, 10) / 10000).toFixed(1)}만 km
+          {vehicle.modelYear}년형 • {formatMileageManKm(vehicle.mileage)}
         </p>
         <div className="mb-3">
           {vehicle.price && (
             <p className="text-h4 font-bold text-primary">
-              {parseInt(vehicle.price, 10).toLocaleString()}만원
+              {formatCurrencyManwon(vehicle.price)}
             </p>
           )}
           <p className="text-caption text-gray-500 mt-0.5">
-            신차 {vehicle.price ? (parseInt(vehicle.price, 10) * 1.5).toLocaleString() : '—'}만원
+            신차 {vehicle.price ? formatCurrencyManwon(parseInt(vehicle.price, 10) * 1.5) : formatCurrencyManwon('', '--- 만원')}
           </p>
         </div>
         <p className="text-body text-gray-600">{vehicle.manufacturer}</p>

@@ -1,12 +1,14 @@
 /**
  * Vehicle Entity Zod Schemas
  * 런타임 데이터 검증
- * 
+ *
  * 참조: docs/DATABASE_ERD_SCHEMA.md
+ * Graceful Degradation: API enum(LISTABLE 등) → mapApiVehicleStatusToFrontend → 프론트 enum
  */
 
 import { z } from 'zod';
 import { Timestamp, isTimestamp } from '@/shared/lib/timestamp';
+import { mapApiVehicleStatusToFrontend } from '@/shared/api/adapters';
 
 /** Timestamp 호환 Zod 스키마 */
 const timestampSchema = z.custom<Timestamp>(
@@ -14,10 +16,8 @@ const timestampSchema = z.custom<Timestamp>(
   { message: 'Invalid Timestamp' }
 );
 
-/**
- * 차량 상태 스키마
- */
-export const vehicleStatusSchema = z.enum([
+/** 프론트 차량 상태 enum (검증용) */
+const frontendVehicleStatusEnum = z.enum([
   'draft',
   'inspection',
   'bidding',
@@ -26,6 +26,15 @@ export const vehicleStatusSchema = z.enum([
   'pending_settlement',
   'completed',
 ]);
+
+/**
+ * 차량 상태 스키마 (Graceful Degradation)
+ * API/ERD 값(LISTABLE 등) → 매퍼 → 프론트 enum. 미정의 값 시 'draft' 폴백.
+ */
+export const vehicleStatusSchema = z
+  .string()
+  .transform((val) => mapApiVehicleStatusToFrontend(val))
+  .pipe(frontendVehicleStatusEnum);
 
 /**
  * 연료 종류 스키마

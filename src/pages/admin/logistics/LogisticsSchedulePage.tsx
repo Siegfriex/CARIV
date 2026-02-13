@@ -14,6 +14,7 @@ import { LandingHeader } from '@/widgets/Header';
 import { GnbMinimalSidebar } from '@/widgets/GnbMinimalSidebar';
 import { GnbListLayout } from '@/widgets/GnbListLayout';
 import { LAYOUT_CLASSES } from '@/shared/config/layout';
+import { formatDateLabelWithWeekday, formatTimeSlotLabel, formatCurrencyManwon, formatMileageManKm } from '@/shared/lib/format';
 import { apiClient } from '@/shared/api/apiClient';
 import { useLogisticsSchedule } from '@/features/logistics';
 import { useToast } from '@/shared/ui/Toast';
@@ -65,20 +66,6 @@ export const LogisticsSchedulePage = () => {
   }, [vehicleId]);
 
   const timeSlots = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
-  /** 1272-14309: 시간 표기 "오전 09:00" / "오후 12:00" SSOT */
-  const formatTimeLabel = (time: string) => {
-    const [h] = time.split(':').map(Number);
-    if (h < 12) return `오전 ${time}`;
-    if (h === 12) return `오후 12:00`;
-    return `오후 ${String(h - 12).padStart(2, '0')}:00`;
-  };
-  /** design_context 1272:13454 — "2026년 1월 25일 일요일" 형식 */
-  const formatDateLabel = (isoDate: string) => {
-    if (!isoDate) return '';
-    const d = new Date(isoDate + 'T12:00:00');
-    const weekdays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 ${weekdays[d.getDay()]}`;
-  };
 
   const selectedItem = selectedId ? listItems.find((i) => i.id === selectedId) : null;
   const totalPages = Math.max(1, Math.ceil(listItems.length / PAGE_SIZE));
@@ -228,7 +215,7 @@ export const LogisticsSchedulePage = () => {
                               onClick={() => setDatePickerStep('year')}
                               className={`w-full px-5 py-3 ${LAYOUT_CLASSES.INPUT_FIELD} text-left text-form-input text-black/40 hover:bg-gray-100 focus:outline-none focus:border-primary`}
                             >
-                              {selectedDate ? formatDateLabel(selectedDate) : '날짜를 선택하세요'}
+                              {selectedDate ? formatDateLabelWithWeekday(selectedDate) : '날짜를 선택하세요'}
                             </button>
                             <input
                               type="date"
@@ -291,7 +278,7 @@ export const LogisticsSchedulePage = () => {
                                 selectedTime === time ? 'bg-primary text-white border-primary' : 'bg-form-field-bg border-form-field-border text-gray-900 hover:bg-gray-100'
                               }`}
                             >
-                              {formatTimeLabel(time)}
+                              {formatTimeSlotLabel(time)}
                             </button>
                           ))}
                         </div>
@@ -466,10 +453,10 @@ export const LogisticsSchedulePage = () => {
                       </p>
                       <p className="text-body font-bold text-black leading-tight" data-node-id="1714:22926">{item.modelName}</p>
                       <p className="text-caption text-gray-600 font-bold leading-tight" data-node-id="1714:22927">
-                        {item.modelYear}년형 · {item.mileage} 만 km
+                        {item.modelYear}년형 · {formatMileageManKm(item.mileage)}
                       </p>
-                      <p className="text-body font-extrabold text-primary leading-tight" data-node-id="1714:22929">--- 만원</p>
-                      <p className="text-caption text-black/30 font-bold leading-tight" data-node-id="1714:22928">신차 4,600만원</p>
+                      <p className="text-body font-extrabold text-primary leading-tight" data-node-id="1714:22929">{formatCurrencyManwon('')}</p>
+                      <p className="text-caption text-black/30 font-bold leading-tight" data-node-id="1714:22928">{formatCurrencyManwon('', '신차 --- 만원')}</p>
                       <div className="mt-auto flex flex-wrap gap-1 pt-1" data-node-id="1714:22931">
                         <span className="inline-block rounded-sm bg-gray-100 px-1.5 py-0.5 text-caption font-bold text-gray-700">1년보증</span>
                         <span className="inline-block rounded-sm bg-gray-100 px-1.5 py-0.5 text-caption font-bold text-gray-700">단순교환무사고</span>
@@ -504,7 +491,7 @@ export const LogisticsSchedulePage = () => {
                       { label: '제조사', value: 'Hyundai' },
                       { label: '모델', value: selectedItem.modelName },
                       { label: '연식', value: selectedItem.modelYear },
-                      { label: '주행거리', value: `${selectedItem.mileage} 만 km` },
+                      { label: '주행거리', value: formatMileageManKm(selectedItem.mileage) },
                       { label: '연료', value: '-' },
                     ].map(({ label, value }) => (
                       <div key={label} className={LAYOUT_CLASSES.DETAIL_PANEL_ROW}>

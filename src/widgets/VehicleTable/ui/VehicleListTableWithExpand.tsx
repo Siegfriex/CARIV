@@ -10,6 +10,7 @@ import { ChevronDown, ChevronUp, Car, Gauge, DollarSign } from 'lucide-react';
 import { LAYOUT_CLASSES } from '@/shared/config/layout';
 import { VehicleStatusBadge } from '@/entities/vehicle/ui/VehicleStatusBadge';
 import { Button } from '@/shared/ui/Button';
+import { formatCurrencyManwon, formatMileageManKm } from '@/shared/lib/format';
 import type { Vehicle } from '@/entities/vehicle/model/types';
 
 /** 컬럼 정의 인터페이스 — columnDefs prop으로 주입 가능 */
@@ -60,7 +61,7 @@ export const DEFAULT_VEHICLE_COLUMN_DEFS: ColumnDef<Vehicle>[] = [
     width: '1fr',
     render: (v) => (
       <span className="text-caption text-gray-600">
-        {v.mileage ? `${(parseInt(v.mileage, 10) / 10000).toFixed(1)}만 km` : '-'}
+        {formatMileageManKm(v.mileage)}
       </span>
     ),
   },
@@ -70,7 +71,7 @@ export const DEFAULT_VEHICLE_COLUMN_DEFS: ColumnDef<Vehicle>[] = [
     width: '1.5fr',
     render: (v) => (
       <span className="text-body text-gray-700">
-        {v.price ? `${parseInt(v.price, 10).toLocaleString()}만원` : '-'}
+        {formatCurrencyManwon(v.price ?? '')}
       </span>
     ),
   },
@@ -175,11 +176,11 @@ export const VehicleListTableWithExpand = ({
                       </p>
                       <p className="flex items-center gap-2 text-caption">
                         <Gauge className="h-4 w-4 text-gray-500" />
-                        주행거리 : {vehicle.mileage ? `${(parseInt(vehicle.mileage, 10) / 10000).toFixed(1)}만 km` : '-'}
+                        주행거리 : {formatMileageManKm(vehicle.mileage)}
                       </p>
                       <p className="flex items-center gap-2 text-caption">
                         <DollarSign className="h-4 w-4 text-gray-500" />
-                        가격 : {vehicle.price ? `${parseInt(vehicle.price, 10).toLocaleString()}만원` : '-'}
+                        가격 : {formatCurrencyManwon(vehicle.price ?? '')}
                       </p>
                     </div>
                     {onView && (

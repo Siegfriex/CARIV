@@ -9,6 +9,7 @@ import { CreditCard, Calendar, DollarSign, Eye, CheckCircle2 } from 'lucide-reac
 import { LandingHeader } from '@/widgets/Header';
 import { GnbMinimalSidebar } from '@/widgets/GnbMinimalSidebar';
 import { LAYOUT_CLASSES } from '@/shared/config/layout';
+import { formatCurrencyManwon } from '@/shared/lib/format';
 import { useSettlements, type SettlementStatusFilter } from '@/features/settlement';
 
 export const SettlementListPage = () => {
@@ -79,12 +80,12 @@ export const SettlementListPage = () => {
                       <td className="p-4">
                         <div className="flex items-center gap-1">
                           <DollarSign className="w-4 h-4 text-fmax-primary" />
-                          <span className="font-bold text-fmax-text-main">{settlement.salePrice.toLocaleString()}만원</span>
+                          <span className="font-bold text-fmax-text-main">{formatCurrencyManwon(settlement.salePrice)}</span>
                         </div>
                       </td>
-                      <td className="p-4 text-sm text-gray-600">{settlement.platformFee.toLocaleString()}만원</td>
+                      <td className="p-4 text-sm text-gray-600">{formatCurrencyManwon(settlement.platformFee)}</td>
                       <td className="p-4">
-                        <span className="font-bold text-fmax-success">{settlement.totalRefund.toLocaleString()}만원</span>
+                        <span className="font-bold text-fmax-success">{formatCurrencyManwon(settlement.totalRefund)}</span>
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-1 text-sm text-gray-600">

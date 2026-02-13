@@ -15,6 +15,11 @@ export interface InspectionRequestStep1FormState {
   address: string;
   addressDetail: string;
   defaultAddress: boolean;
+  /** 주소 검색 API 결과 (placeId, 좌표) */
+  placeId?: string;
+  placeName?: string;
+  lat?: number;
+  lng?: number;
 }
 
 const initialFormState: InspectionRequestStep1FormState = {
@@ -65,6 +70,9 @@ export const useInspectionRequestStep1 = (options: UseInspectionRequestStep1Opti
   const setDefaultAddress = useCallback((value: boolean) => {
     setForm((prev) => ({ ...prev, defaultAddress: value }));
   }, []);
+  const setPlaceInfo = useCallback((place: { placeId?: string; placeName?: string; lat?: number; lng?: number }) => {
+    setForm((prev) => ({ ...prev, ...place }));
+  }, []);
 
   const handleSubmit = useCallback(() => {
     if (!skipRequired && (!form.preferredDate || !form.preferredTime || !form.address)) {
@@ -84,6 +92,7 @@ export const useInspectionRequestStep1 = (options: UseInspectionRequestStep1Opti
     setAddress,
     setAddressDetail,
     setDefaultAddress,
+    setPlaceInfo,
     handleSubmit,
   };
 };

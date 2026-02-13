@@ -12,6 +12,7 @@ import { LAYOUT_CLASSES } from '@/shared/config/layout';
 import { getRegisterFlowSteps } from '@/shared/config/registerFlowSteps';
 import { Button } from '@/shared/ui/Button';
 import { CheckCircle2 } from 'lucide-react';
+import { formatCurrencyManwon } from '@/shared/lib/format';
 
 export const AuctionCompletePage = () => {
   const { vehicleId } = useParams<{ vehicleId: string }>();
@@ -63,8 +64,8 @@ export const AuctionCompletePage = () => {
             </p>
             {(startPrice || instantPrice || startDate || endDate) && (
               <div className="text-body text-gray-600 mb-4 space-y-1">
-                {startPrice && <p>시작가: {startPrice}만원</p>}
-                {instantPrice && <p>즉시구매가: {instantPrice}만원</p>}
+                {startPrice && <p>시작가: {formatCurrencyManwon(startPrice)}</p>}
+                {instantPrice && <p>즉시구매가: {formatCurrencyManwon(instantPrice)}</p>}
                 {startDate && <p>경매 시작일: {startDate}</p>}
                 {endDate && <p>경매 종료일: {endDate}</p>}
               </div>

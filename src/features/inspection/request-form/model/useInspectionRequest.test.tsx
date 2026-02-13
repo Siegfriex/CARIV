@@ -10,11 +10,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastProvider } from '@/shared/ui/Toast';
 import { useInspectionRequest } from './useInspectionRequest';
 
-const apiPost = vi.fn();
+const inspectionRequest = vi.fn();
 
 vi.mock('@/shared/api/client', () => ({
   apiClient: {
-    post: <T,>(endpoint: string, data?: unknown) => apiPost(endpoint, data) as Promise<T>,
+    vehicle: {
+      inspection: {
+        request: (vehicleId: string, body: unknown) =>
+          inspectionRequest(vehicleId, body),
+      },
+    },
   },
 }));
 
@@ -33,14 +38,14 @@ function createWrapper() {
 
 describe('useInspectionRequest', () => {
   beforeEach(() => {
-    apiPost.mockReset();
+    inspectionRequest.mockReset();
   });
 
-  test('mutation 성공 시 apiClient.post 호출 및 onSuccess 동작', async () => {
-    apiPost.mockResolvedValue({
-      success: true,
-      inspection_id: 'insp-1',
-      message: '검차 신청되었습니다.',
+  test('mutation 성공 시 apiClient.vehicle.inspection.request 호출 및 onSuccess 동작', async () => {
+    inspectionRequest.mockResolvedValue({
+      ok: true,
+      result: { inspectionId: 9001, vehicleId: 101, status: 'REQUESTED' },
+      message: null,
     });
 
     const { result } = renderHook(() => useInspectionRequest(), {
@@ -48,33 +53,42 @@ describe('useInspectionRequest', () => {
     });
 
     const input = {
-      vehicle_id: 'v-1',
-      preferred_date: '2026-02-15',
-      preferred_time: '14:00',
+      vehicleId: 'v-1',
+      preferredDate: '2026-02-15',
+      preferredTime: '14:00',
+      address: '서울 강남구',
     };
     result.current.mutate(input);
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(apiPost).toHaveBeenCalledWith('inspectionRequestAPI', input);
+    expect(inspectionRequest).toHaveBeenCalledWith(
+      'v-1',
+      expect.objectContaining({
+        inspectionPlace: expect.any(Object),
+        schedule: expect.objectContaining({ requestDate: '2026-02-15T14:00:00' }),
+        payment: expect.objectContaining({ method: 'AUTO', provider: 'CARD' }),
+      })
+    );
     expect(result.current.data).toEqual({
       success: true,
-      inspection_id: 'insp-1',
-      message: '검차 신청되었습니다.',
+      inspectionId: '9001',
+      message: '검차 신청이 완료되었습니다.',
     });
   });
 
   test('mutation 실패 시 error 상태', async () => {
-    apiPost.mockRejectedValue(new Error('검차 신청 실패'));
+    inspectionRequest.mockRejectedValue(new Error('검차 신청 실패'));
 
     const { result } = renderHook(() => useInspectionRequest(), {
       wrapper: createWrapper(),
     });
 
     result.current.mutate({
-      vehicle_id: 'v-1',
-      preferred_date: '2026-02-15',
-      preferred_time: '14:00',
+      vehicleId: 'v-1',
+      preferredDate: '2026-02-15',
+      preferredTime: '14:00',
+      address: '서울 강남구',
     });
 
     await waitFor(() => expect(result.current.isError).toBe(true));

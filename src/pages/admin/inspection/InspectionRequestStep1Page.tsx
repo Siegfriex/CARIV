@@ -5,7 +5,7 @@
  * 레이아웃: 루트 #f8f9fa, 사이드바 249px, 메인 980px, 제목 28px/44px
  */
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { logEventWithHypothesis } from '@/shared/lib/logEvent';
 import { LandingHeader } from '@/widgets/Header';
 import { ProgressSidebar } from '@/widgets/ProgressSidebar';
@@ -14,19 +14,26 @@ import { getRegisterFlowSteps } from '@/shared/config/registerFlowSteps';
 import { Button } from '@/shared/ui/Button';
 import { useDevSkip } from '@/shared/context/DevSkipContext';
 import { useFormFeedback } from '@/shared/lib/formFeedback';
-import { useInspectionRequestStep1 } from '@/features/inspection/request-form';
+import { useCallback } from 'react';
+import { useInspectionRequestStep1, useInspectionRequest } from '@/features/inspection/request-form';
 import {
   InspectionVehicleSelectSection,
   InspectionScheduleSection,
   InspectionLocationSection,
   InspectionPaymentSection,
 } from '@/widgets/InspectionRequestStep1';
+import { openDaumPostcode } from '@/shared/hooks/useDaumPostcode';
+import { geocodeAddress } from '@/shared/hooks/useGeocode';
 
 export const InspectionRequestStep1Page = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { skipRequired } = useDevSkip();
   const { showValidationError } = useFormFeedback();
+  const vehicleIdFromUrl = searchParams.get('vehicleId')?.trim() ?? '';
+  const vehicleId = vehicleIdFromUrl || (skipRequired ? 'v-1' : '');
 
+  const { mutate: submitInspection, isPending } = useInspectionRequest();
   const {
     form,
     setVehicleSearch,
@@ -36,14 +43,53 @@ export const InspectionRequestStep1Page = () => {
     setAddress,
     setAddressDetail,
     setDefaultAddress,
-    handleSubmit,
+    setPlaceInfo,
   } = useInspectionRequestStep1({
     skipRequired,
     onValidationError: showValidationError,
-    onBeforeNavigate: () => {
-      logEventWithHypothesis('InspectionRequestStep1Page:next', '검차 step1→목록', { to: '/inspections' }, 'H_CTA2');
-    },
   });
+
+  const handleFindZipCode = useCallback(() => {
+    openDaumPostcode(({ zonecode, address, addressDetail }) => {
+      setZipCode(zonecode);
+      setAddress(address);
+      if (addressDetail) setAddressDetail(addressDetail);
+      geocodeAddress(address).then((geo) => {
+        if (geo) setPlaceInfo({ placeId: geo.placeId, placeName: address, lat: geo.lat, lng: geo.lng });
+      });
+    }).catch((err) => showValidationError(err instanceof Error ? err.message : '우편번호 검색을 불러올 수 없습니다.'));
+  }, [setZipCode, setAddress, setAddressDetail, setPlaceInfo, showValidationError]);
+
+  const handleSubmit = () => {
+    if (!vehicleId) {
+      showValidationError('차량을 선택해주세요. 차량 목록에서 검차 신청할 차량을 선택한 후 진행해주세요.');
+      return;
+    }
+    if (!skipRequired && (!form.preferredDate || !form.preferredTime || !form.address)) {
+      showValidationError('필수 항목을 입력해주세요.');
+      return;
+    }
+    submitInspection(
+      {
+        vehicleId,
+        preferredDate: form.preferredDate,
+        preferredTime: form.preferredTime,
+        zipCode: form.zipCode,
+        address: form.address,
+        addressDetail: form.addressDetail,
+        placeId: form.placeId,
+        placeName: form.placeName,
+        lat: form.lat,
+        lng: form.lng,
+      },
+      {
+        onSuccess: () => {
+          logEventWithHypothesis('InspectionRequestStep1Page:next', '검차 step1→목록', { to: '/inspections' }, 'H_CTA2');
+          navigate('/inspections');
+        },
+      }
+    );
+  };
 
   return (
     <div className="inspection-step1-root min-h-screen" data-name="매물 목록 - 차량목록 페이지 랜딩페이지" data-node-id="1033:4903">
@@ -100,6 +146,7 @@ export const InspectionRequestStep1Page = () => {
               onAddressChange={setAddress}
               onAddressDetailChange={setAddressDetail}
               onDefaultAddressChange={setDefaultAddress}
+              onFindZipCode={handleFindZipCode}
             />
 
             <InspectionPaymentSection />
@@ -123,10 +170,11 @@ export const InspectionRequestStep1Page = () => {
                 </Button>
                 <Button
                   onClick={handleSubmit}
+                  disabled={isPending}
                   className="h-[37px] w-[118px] rounded-[10px] border border-[var(--color-gray-200)] bg-[var(--color-primary)] text-[12px] font-medium text-white shadow-[var(--shadow-figma-card)]"
                   data-node-id="1193:6885"
                 >
-                  신청하기
+                  {isPending ? '처리 중...' : '신청하기'}
                 </Button>
               </div>
             </div>

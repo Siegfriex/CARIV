@@ -3,7 +3,7 @@
  * 배경: img/LANDING.png. 에셋: chevron-right. 배지 제거.
  */
 
-import landingImage from '@img/LANDING.png';
+import landingImage from '@img/LANDING.svg';
 import imgChevronRight from '@/shared/figma_image/1368-37364_지금시작하기_chevron-right.png';
 import { LAYOUT_CLASSES } from '@/shared/config/layout';
 import { Button } from '@/shared/ui/Button';

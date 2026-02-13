@@ -1,44 +1,38 @@
 /**
  * useInspectionRequest Hook
  * 검차 신청 (useMutation)
+ * CarivDealer_api_v1.md §3.1 바디 구조, adapters/inspectionAdapter 사용
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/shared/api/client';
 import { inspectionKeys, vehicleKeys } from '@/shared/api/queryKeys';
-import { API_ENDPOINTS } from '@/shared/config/apiEndpoints';
+import {
+  toInspectionRequestApiBody,
+  fromInspectionRequestApiResponse,
+  type InspectionRequestFormInput,
+  type InspectionRequestFrontendResponse,
+} from '@/shared/api/adapters';
 import { handleError } from '@/shared/lib/errorHandler';
 import { useToast } from '@/shared/ui/Toast';
 
-/** 검차 신청 요청 입력 */
-interface InspectionRequestInput {
-  vehicle_id: string;
-  preferred_date: string;
-  preferred_time: string;
-}
-
-/** 검차 신청 응답 */
-interface InspectionRequestResponse {
-  success: boolean;
-  inspection_id: string;
-  message: string;
-}
-
 /**
  * 검차 신청 뮤테이션 훅
- * @description VEHICLE.INSPECTION_REQUEST 엔드포인트로 검차 신청, 성공 시 inspections·vehicles 쿼리 무효화
- * @returns useMutation (mutationFn: InspectionRequestInput → InspectionRequestResponse)
+ * @description POST /vehicles/{vehicleId}/inspections, 문서 §3.1 바디(inspectionPlace, schedule, payment, memo)
+ * @returns useMutation (mutationFn: InspectionRequestFormInput → InspectionRequestFrontendResponse)
  */
 export const useInspectionRequest = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
   return useMutation({
-    mutationFn: async (input: InspectionRequestInput): Promise<InspectionRequestResponse> => {
-      return await apiClient.post<InspectionRequestResponse>(
-        API_ENDPOINTS.VEHICLE.INSPECTION_REQUEST,
-        input
-      );
+    mutationFn: async (
+      input: InspectionRequestFormInput
+    ): Promise<InspectionRequestFrontendResponse> => {
+      const { vehicleId, ...form } = input;
+      const apiBody = toInspectionRequestApiBody({ vehicleId, ...form });
+      const raw = await apiClient.vehicle.inspection.request(vehicleId, apiBody);
+      return fromInspectionRequestApiResponse(raw as Parameters<typeof fromInspectionRequestApiResponse>[0]);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: inspectionKeys.all });
